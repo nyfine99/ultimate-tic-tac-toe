@@ -94,7 +94,8 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                 turn = prog1_name
 
         moves+=1
-    # Display the winner
+    # Display the final board and the winner
+    drawBoard(game_state)
     c = winner(game_state)
     if c == 'X':
         print('Player 1 wins!')
