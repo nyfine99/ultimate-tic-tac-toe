@@ -162,6 +162,14 @@ def checkTTTBoardForWinner(tttboard):
     # if this point is reached, we have no winner
     return ' '
 
+def isFull(tttboard):
+    # Returns True if tttboard is full, false otherwise
+    for i in range(3):
+        for j in range(3):
+            if tttboard[i][j] == ' ':
+                return False
+    return True
+
 
 def indicateWinner(small_board, tile):
     # Adjusts a small board on which a player has won 
@@ -210,8 +218,9 @@ def makeMove(game_state, tile, bigx, bigy, smallx, smally):
         big_board[bigx][bigy] = indicateWinner(big_board[bigx][bigy], tile)
         small_winners[bigx][bigy] = tile
     # adjusting move_loc
-    if small_winners[smallx][smally] != ' ':
-        # the next player gets a free move
+    if small_winners[smallx][smally]!=' ' or isFull(big_board[smallx][smally]):
+        # if the next player is sent to a box which has been won or 
+        # which is full, they get an unconstrained move
         # adjusting one element at a time so that it isn't adjusting the copy
         move_loc[0] = 3
         move_loc[1] = 3
@@ -258,8 +267,9 @@ def winner(game_state):
 #     game_state = getNewGame()
 #     drawBoard(game_state)
 #     new_board = [['X', 'O', 'X'],
-#         ['O', 'X', ' '],
+#         ['O', 'X', 'X'],
 #         ['O', 'O', 'X']]
+#     print(isFull(new_board))
 #     print(checkTTTBoardForWinner(new_board))
 
 #     game_state[0][0][0] = indicateWinnerX(new_board)
