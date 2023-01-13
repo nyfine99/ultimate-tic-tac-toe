@@ -140,11 +140,11 @@ def UCT(game_state, curr_player, states_seen):
         states_seen[state_string] = [0, 0]
 
     valid_moves = get_valid_moves(game_state)
-    if valid_moves == []:
-        # in this case, no one can move, and the game is done
+    game_winner = winner(game_state)
+    if valid_moves == [] or game_winner != ' ':
+        # in this case the game is done
         # we treat X as max nodes and O as min nodes, so return 1 if X wins,
         # 0 if O wins
-        game_winner = winner(game_state)
         if game_winner == 'X':
             # X wins; adjust r appropriately and return r value
             states_seen[state_string][0] = (states_seen[state_string][0] * 
