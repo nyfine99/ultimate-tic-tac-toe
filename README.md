@@ -82,3 +82,7 @@ Example: to test the ordinary UCT algorithm against the improved UCT algorithm, 
 ```bash
 python3 test.py players.ordinary players.improved 25 0.5 0
 ```
+
+## Notes and Conclusions
+
+The basic implementation of UCT in Ultimate Tic-Tac-Toe differed greatly from its implementation in Reversi in one key regard: its effectiveness against humans (or, at least against me). The Reversi ordinary UCT player could beat me fairly consistently when alloted five seconds per move, possibly less. But I was very consistently able to crush the Ultimate Tic-Tac-Toe ordinary UCT player even when giving it fifteen seconds to move. There is certainly plently of improvement that can be done, TBA!
