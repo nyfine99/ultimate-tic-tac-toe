@@ -1,6 +1,22 @@
 """
-In this file, we implement ordinary UCT. More details will be given further on.
+In this file, we implement an improved version of UCT. This version prioritizes
+not giving away free moves and capturing boxes when possible. It uses
+constants below in the Q value calculation to implement this, as well as taking
+the move which either captures a square or doesn't give away a free move in the
+event of tied r values.
 """
+
+# After only STOP_VALUE spaces are available, this system no longer takes effect.
+# Note that this is only checked at the start of the get_move function, not with
+# each recursive call to UCT
+STOP_VALUE = 40
+
+# The multiplier used in Q value calculation for capturing a box; >= 1
+CAPTURE_BOX_MULT = 1.25
+
+# The multiplier used in Q value calculation for giving away an
+# unrestricted move; <= 1
+GIVE_FREE_MULT = 0.5
 
 # performing necessary imports
 from ultimate_ttt import *
@@ -12,12 +28,54 @@ import math
 # a global variable which tracks the sets of all game states seen;
 # this is split into "X" and "O" to prevent one player from peeking 
 # at another's data
-ord_seen = {"X": {}, "O": {}} # map from player -> 
+imp_seen = {"X": {}, "O": {}} # map from player -> 
 # (map from states -> [r_state, t_state])
 # states are represented as board strings
 
-ord_total_tries = 0 # tracks how many times the get_move algorithm has
+imp_total_tries = 0 # tracks how many times the get_move algorithm has
 # been run; I wanted to compare this to improved and it helped with debugging
+
+
+def alt_make_move(game_state, tile, bigx, bigy, smallx, smally):
+    # an alternate make_move function which returns None if the move is
+    # invalid and updates the game state if it is valid. However, this will
+    # now also return whether or not the new game state resulted in a
+    # new captured box for the player as a boolean if the move is valid;
+    # this need not return whether a free move was given away, as this 
+    # is implied by move_loc
+    # Place the tile on the board at the indicated location, 
+    # and update all components of game_state accordingly.
+    # Returns False if this is an invalid move, True otherwise.
+    big_board = game_state[0]
+    small_winners = game_state[1]
+    move_loc = game_state[2]
+    if not is_valid_move(big_board, small_winners, move_loc, 
+        bigx, bigy, smallx, smally):
+        return None
+
+    box_captured = False # this will become true if a box was captued
+    # if this point is reached, the move is valid, and the 
+    # game_state needs to be updated
+    # adjusting big_board
+    big_board[bigx][bigy][smallx][smally] = tile
+    # adjusting small_winners, if applicable
+    if check_tttboard_for_winner(big_board[bigx][bigy]) == tile:
+        big_board[bigx][bigy] = indicate_winner(big_board[bigx][bigy], tile)
+        small_winners[bigx][bigy] = tile
+        box_captured = True
+    # adjusting move_loc
+    if small_winners[smallx][smally]!=' ' or is_full(big_board[smallx][smally]):
+        # if the next player is sent to a box which has been won or 
+        # which is full, they get an unconstrained move
+        # adjusting one element at a time so that it isn't adjusting the copy
+        move_loc[0] = 3
+        move_loc[1] = 3
+    else: 
+        move_loc[0] = smallx
+        move_loc[1] = smally
+
+    return box_captured
+
 
 def get_state_string(game_state):
     # Returns the game_state represented as a string.
@@ -43,12 +101,15 @@ def get_state_string_after_move(game_state, move, curr_player):
     # Returns the state string after applying move to the board
 
     state_copy = get_game_state_copy(game_state)
-    make_move(state_copy, curr_player, move[0], move[1], move[2], move[3])
+    box_captured = alt_make_move(
+        state_copy, curr_player, move[0], move[1], move[2], move[3])
     s = get_state_string(state_copy)
-    return s
+    gives_free_move = (state_copy[2][0] == 3)
+    return s, box_captured, gives_free_move
 
 
-def Q_value(r_next_move, t_next_move, t_total, curr_player):
+def Q_value(r_next_move, t_next_move, t_total, curr_player, 
+    box_captured, gives_free_move):
     """
     r_next_move: r_y, the observed reward at state y, where y is the 
     state of the game after the move being examined is made
@@ -60,12 +121,19 @@ def Q_value(r_next_move, t_next_move, t_total, curr_player):
     Returns the "score" for the player owning curr_player of making the move 
     currently being explored.
     """
-
+    local_box_mult = 1.0
+    if box_captured:
+        local_box_mult = CAPTURE_BOX_MULT
+    local_free_mult = 1.0
+    if gives_free_move:
+        local_free_mult = GIVE_FREE_MULT
     if curr_player == 'X':
         # we are at a max node, so we want to maximize the following:
-        return r_next_move + math.sqrt(2 * math.log(t_total)/t_next_move)
+        return r_next_move + (local_box_mult * local_free_mult * 
+            math.sqrt(2 * math.log(t_total)/t_next_move))
     # we are at a min node, so we want to maximize the following:
-    return 1 - r_next_move + math.sqrt(2 * math.log(t_total)/t_next_move)
+    return 1 - r_next_move + (local_box_mult * local_free_mult * 
+        math.sqrt(2 * math.log(t_total)/t_next_move))
     # note: the maximization of the result is done in UCB_choose
 
 
@@ -90,7 +158,7 @@ def UCB_choose(game_state, state_string, possible_moves, curr_player,
     for i in range(0, len(possible_moves)):
         # obtaining the child state corresponding to making the move 
         # possible_moves[i]
-        new_state = get_state_string_after_move(game_state, 
+        new_state, _, _ = get_state_string_after_move(game_state, 
             possible_moves[i], curr_player)
         if new_state not in states_seen:
             # this move has not yet been examined, so we return it
@@ -104,11 +172,12 @@ def UCB_choose(game_state, state_string, possible_moves, curr_player,
     curr_max = -1
     best_move = -1
     for i in range(0, len(possible_moves)):
-        new_state = get_state_string_after_move(game_state, 
-            possible_moves[i], curr_player)
+        new_state, box_captured, gives_free_move = get_state_string_after_move(
+            game_state, possible_moves[i], curr_player)
         r_t_pair = states_seen[new_state] # this has the list [r_y, t_y] 
         # for child state y
-        curr_Q_val = Q_value(r_t_pair[0], r_t_pair[1], t_total, curr_player)
+        curr_Q_val = Q_value(r_t_pair[0], r_t_pair[1], t_total, curr_player,
+            box_captured, gives_free_move)
         if curr_Q_val > curr_max:
             # in this case, the possible_moves[i] has a better score than 
             # the other moves checked so far
@@ -191,16 +260,16 @@ def get_move(game_state, curr_player):
     # Returns the best known move that can be made after a call to UCT.
 
     # importing the set of all states seen so far
-    global ord_seen
+    global imp_seen
     # importing a counter which counts the total calls to get_move;
     # interesting to see the statistics on this
-    global ord_total_tries
+    global imp_total_tries
     # creating a copy of the board, so that the board is not edited 
     # by our call to UCT
     state_copy = get_game_state_copy(game_state)
 
     # call UCT
-    UCT(state_copy, curr_player, ord_seen[curr_player])
+    UCT(state_copy, curr_player, imp_seen[curr_player])
 
     # take the best known move; if X is currently moving, this is the move
     # with the highest r value, and if O is moving, this is the move with
@@ -210,28 +279,48 @@ def get_move(game_state, curr_player):
     curr_best = [-1, -1, -1, -1]
     if curr_player =="X":
         curr_max_r = -1
+        curr_best_captures_box = False
+        curr_best_gives_free_move = True
         for move in poss_moves:
-            post_move = get_state_string_after_move(game_state, move, curr_player)
+            post_move, captures_box, gives_free_move = get_state_string_after_move(
+                game_state, move, curr_player)
 
-            if post_move in ord_seen[curr_player] and (
-                ord_seen[curr_player][post_move][0] > curr_max_r):
-                curr_max_r = ord_seen[curr_player][post_move][0]
+            if post_move in imp_seen[curr_player] and (
+                (imp_seen[curr_player][post_move][0] > curr_max_r) or (
+                (imp_seen[curr_player][post_move][0] == curr_max_r) and (
+                curr_best_gives_free_move and gives_free_move == False)) or (
+                curr_best_gives_free_move == gives_free_move and 
+                curr_best_captures_box == False and captures_box)
+                ):
                 curr_best = move
+                curr_max_r = imp_seen[curr_player][post_move][0]
+                curr_best_captures_box = captures_box
+                curr_best_gives_free_move = gives_free_move
         # This statement can be used to obtain how UCT views its win probability after this move        
         # print(curr_max_r)
 
     else:
         curr_min_r = 2
+        curr_best_captures_box = False
+        curr_best_gives_free_move = True
         for move in poss_moves:
-            post_move = get_state_string_after_move(game_state, move, curr_player)
+            post_move, captures_box, gives_free_move = get_state_string_after_move(
+                game_state, move, curr_player)
 
-            if post_move in ord_seen[curr_player] and (
-                ord_seen[curr_player][post_move][0] < curr_min_r):
-                curr_min_r = ord_seen[curr_player][post_move][0]
+            if post_move in imp_seen[curr_player] and (
+                (imp_seen[curr_player][post_move][0] < curr_min_r) or (
+                (imp_seen[curr_player][post_move][0] == curr_min_r) and (
+                curr_best_gives_free_move and gives_free_move == False)) or (
+                curr_best_gives_free_move == gives_free_move and 
+                curr_best_captures_box == False and captures_box)
+                ):
                 curr_best = move
+                curr_min_r = imp_seen[curr_player][post_move][0]
+                curr_best_captures_box = captures_box
+                curr_best_gives_free_move = gives_free_move
 
         # This statement can be used to obtain how UCT views its win probability after this move        
         # print(curr_min_r)
 
-    ord_total_tries = ord_total_tries + 1
+    imp_total_tries = imp_total_tries + 1
     return curr_best

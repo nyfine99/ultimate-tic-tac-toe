@@ -201,7 +201,7 @@ def indicate_winner(small_board, tile):
 def make_move(game_state, tile, bigx, bigy, smallx, smally):
     # Place the tile on the board at the indicated location, 
     # and update all components of game_state accordingly.
-    # Returns False if this is an invalid move, the new game_state otherwise.
+    # Returns False if this is an invalid move, True otherwise.
     big_board = game_state[0]
     small_winners = game_state[1]
     move_loc = game_state[2]
