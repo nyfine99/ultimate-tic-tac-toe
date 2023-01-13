@@ -30,13 +30,13 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
 
     moves=0
 
-    game_state = getNewGame()
+    game_state = get_new_game()
     player1Tile, player2Tile = ['X', 'O']
     turn=prog1_name
     while True:
         if turn == prog1_name:
             if verbose:
-                drawBoard(game_state)
+                draw_board(game_state)
                 showNextMoveLoc(game_state, player1Tile)
 
             while True:
@@ -47,7 +47,7 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                 if move == 'quit':
                     print("Player 1 has quit the game.")
                     return
-                elif isValidMove(game_state[0], game_state[1], game_state[2], 
+                elif is_valid_move(game_state[0], game_state[1], game_state[2], 
                     move[0], move[1], move[2], move[3]):
                     break
                 else:
@@ -56,16 +56,16 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                         " is an invalid move")
             print("Player 1 played:["+str(move[0]+1)+","+str(move[1]+1)+
                 ","+str(move[2]+1)+","+str(move[3]+1)+"]")
-            makeMove(game_state, player1Tile,move[0],move[1],move[2],move[3])
+            make_move(game_state, player1Tile,move[0],move[1],move[2],move[3])
 
-            if winner(game_state) != ' ' or getValidMoves(game_state) == []:
+            if winner(game_state) != ' ' or get_valid_moves(game_state) == []:
                 break
             else:
                 turn = prog2_name
 
         else:
             if verbose:
-                drawBoard(game_state)
+                draw_board(game_state)
                 showNextMoveLoc(game_state, player2Tile)
             
             while True:
@@ -76,7 +76,7 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                 if move == 'quit':
                     print("Player 2 has quit the game.")
                     return
-                elif isValidMove(game_state[0], game_state[1], game_state[2],
+                elif is_valid_move(game_state[0], game_state[1], game_state[2],
                     move[0], move[1], move[2], move[3]):
                     break
                 else:
@@ -85,17 +85,17 @@ def supervisor(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                         " is an invalid move")
             print("Player 2 played:["+str(move[0]+1)+","+str(move[1]+1)+
                 ","+str(move[2]+1)+","+str(move[3]+1)+"]")
-            makeMove(game_state,player2Tile,move[0],move[1],move[2],move[3])
+            make_move(game_state,player2Tile,move[0],move[1],move[2],move[3])
 
 
-            if winner(game_state) != ' ' or getValidMoves(game_state) == []:
+            if winner(game_state) != ' ' or get_valid_moves(game_state) == []:
                 break
             else:
                 turn = prog1_name
 
         moves+=1
     # Display the final board and the winner
-    drawBoard(game_state)
+    draw_board(game_state)
     c = winner(game_state)
     if c == 'X':
         print('Player 1 wins!')

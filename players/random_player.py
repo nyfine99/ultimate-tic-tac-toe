@@ -2,6 +2,6 @@ from ultimate_ttt import *
 import random
 
 def get_move(game_state, tile):
-	possibleMoves = getValidMoves(game_state)
-	random.shuffle(possibleMoves)
-	return possibleMoves[0]
+	possible_moves = get_valid_moves(game_state)
+	random.shuffle(possible_moves)
+	return possible_moves[0]

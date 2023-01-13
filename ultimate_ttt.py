@@ -1,10 +1,10 @@
 import random
 import sys
 
-def drawBoard(game_state):
+def draw_board(game_state):
     # This function prints out the board that it was passed. Returns None.
 
-    def printRow(row_num):
+    def print_row(row_num):
         # A helper function which prints the row_num row of the board, 
         # indexed at 0. Returns None.
         big_board_y = int(row_num/3)
@@ -40,7 +40,7 @@ def drawBoard(game_state):
     print("") # adding space between labels and board
     # print(VLINE)
     for i in range(9):
-        printRow(i)
+        print_row(i)
         if i % 3 != 2:
             print(MINOR_HLINE)
         elif i != 8:
@@ -50,7 +50,7 @@ def drawBoard(game_state):
     print("")
 
 
-def getNewGame():
+def get_new_game():
     # Creates a new game, including a blank board, 
     # blank small_winners, and free move_loc.
     big_board = []
@@ -73,19 +73,19 @@ def getNewGame():
     return game_state
 
 
-def isOnBoard(bigx, bigy, smallx, smally):
+def is_on_board(bigx, bigy, smallx, smally):
     # Returns True if the coordinates are located on the board.
     return bigx >= 0 and bigx <= 2 and bigy >= 0 and bigy <=2 and (
         smallx >= 0 and smallx <= 2 and smally >= 0 and smally <=2)
 
 
-def isValidMove(board, small_winners, move_loc, bigx, bigy, smallx, smally):
-    # Mostly used as a helper function for getValidMoves, hence the components
+def is_valid_move(board, small_winners, move_loc, bigx, bigy, smallx, smally):
+    # Mostly used as a helper function for get_valid_moves, hence the components
     # of game_state are taken in as parameters rather than game_state
     # bigx, bigy, smallx, and smally indicate the player's desired move.
     # Returns False if the player's move on the space indicated is invalid.
     # Returns True if the move is valid.
-    if (isOnBoard(bigx, bigy, smallx, smally)) and (
+    if (is_on_board(bigx, bigy, smallx, smally)) and (
         small_winners[bigx][bigy] == ' ') and (
         (move_loc[0]==3) or (move_loc[0]==bigx and move_loc[1]==bigy)) and (
         board[bigx][bigy][smallx][smally] == ' '):
@@ -93,7 +93,7 @@ def isValidMove(board, small_winners, move_loc, bigx, bigy, smallx, smally):
     return False
 
 
-def getValidMoves(game_state):
+def get_valid_moves(game_state):
     # Returns a list of [bigx,bigy,smallx,smally] lists of valid moves for the
     # player in the current game_state.
     board = game_state[0]
@@ -107,19 +107,19 @@ def getValidMoves(game_state):
             for bigy in range(3):
                 for smallx in range(3):
                     for smally in range(3):
-                        if isValidMove(board, small_winners, move_loc, bigx, 
+                        if is_valid_move(board, small_winners, move_loc, bigx, 
                             bigy, smallx, smally):
                             validMoves.append([bigx, bigy, smallx, smally])
     else:
         for smallx in range(3):
             for smally in range(3):
-                if isValidMove(board, small_winners, move_loc, move_loc[0], 
+                if is_valid_move(board, small_winners, move_loc, move_loc[0], 
                     move_loc[1], smallx, smally):
                     validMoves.append([move_loc[0], move_loc[1], 
                         smallx, smally])
     return validMoves
 
-def checkTTTBoardForWinner(tttboard):
+def check_tttboard_for_winner(tttboard):
     # Checks a standard tic-tac-toe board for a winner.
     # Returns 'X' if X wins, 'O' if O wins, and ' ' otherwise
     for c in ['X', 'O']:
@@ -162,7 +162,7 @@ def checkTTTBoardForWinner(tttboard):
     # if this point is reached, we have no winner
     return ' '
 
-def isFull(tttboard):
+def is_full(tttboard):
     # Returns True if tttboard is full, false otherwise
     for i in range(3):
         for j in range(3):
@@ -171,7 +171,7 @@ def isFull(tttboard):
     return True
 
 
-def indicateWinner(small_board, tile):
+def indicate_winner(small_board, tile):
     # Adjusts a small board on which a player has won 
     # to indicate it more clearly.
     # Returns the adjusted small board.
@@ -198,14 +198,14 @@ def indicateWinner(small_board, tile):
     return small_board
 
 
-def makeMove(game_state, tile, bigx, bigy, smallx, smally):
+def make_move(game_state, tile, bigx, bigy, smallx, smally):
     # Place the tile on the board at the indicated location, 
     # and update all components of game_state accordingly.
     # Returns False if this is an invalid move, the new game_state otherwise.
     big_board = game_state[0]
     small_winners = game_state[1]
     move_loc = game_state[2]
-    if not isValidMove(big_board, small_winners, move_loc, 
+    if not is_valid_move(big_board, small_winners, move_loc, 
         bigx, bigy, smallx, smally):
         return False
 
@@ -214,11 +214,11 @@ def makeMove(game_state, tile, bigx, bigy, smallx, smally):
     # adjusting big_board
     big_board[bigx][bigy][smallx][smally] = tile
     # adjusting small_winners, if applicable
-    if checkTTTBoardForWinner(big_board[bigx][bigy]) == tile:
-        big_board[bigx][bigy] = indicateWinner(big_board[bigx][bigy], tile)
+    if check_tttboard_for_winner(big_board[bigx][bigy]) == tile:
+        big_board[bigx][bigy] = indicate_winner(big_board[bigx][bigy], tile)
         small_winners[bigx][bigy] = tile
     # adjusting move_loc
-    if small_winners[smallx][smally]!=' ' or isFull(big_board[smallx][smally]):
+    if small_winners[smallx][smally]!=' ' or is_full(big_board[smallx][smally]):
         # if the next player is sent to a box which has been won or 
         # which is full, they get an unconstrained move
         # adjusting one element at a time so that it isn't adjusting the copy
@@ -231,9 +231,9 @@ def makeMove(game_state, tile, bigx, bigy, smallx, smally):
     return True
 
 
-def getGameStateCopy(game_state):
+def get_game_state_copy(game_state):
     # Make a duplicate of the board list and return the duplicate.
-    game_state_copy = getNewGame()
+    game_state_copy = get_new_game()
     
     board = game_state[0]
     board_copy = game_state_copy[0]
@@ -258,72 +258,72 @@ def getGameStateCopy(game_state):
 
 def winner(game_state):
     # Returns 'X' if X has won, 'O' if O has won, and ' ' otherwise.
-    return checkTTTBoardForWinner(game_state[1])
+    return check_tttboard_for_winner(game_state[1])
 
 
 # I use the main method below to test
 
 # if __name__=="__main__":
-#     game_state = getNewGame()
-#     drawBoard(game_state)
+#     game_state = get_new_game()
+#     draw_board(game_state)
 #     new_board = [['X', 'O', 'X'],
 #         ['O', 'X', 'X'],
 #         ['O', 'O', 'X']]
-#     print(isFull(new_board))
-#     print(checkTTTBoardForWinner(new_board))
+#     print(is_full(new_board))
+#     print(check_tttboard_for_winner(new_board))
 
-#     game_state[0][0][0] = indicateWinnerX(new_board)
-#     drawBoard(game_state)
+#     game_state[0][0][0] = indicate_winner(new_board)
+#     draw_board(game_state)
 
-#     makeMove(game_state, 'X', 1,1,0,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 0,0,1,1)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,1,2,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 2,2,1,1)
-#     drawBoard(game_state)
-#     game_state_copy = getGameStateCopy(game_state)
-#     makeMove(game_state, 'X', 1,1,1,1)
-#     drawBoard(game_state)
-#     drawBoard(game_state_copy)
+#     make_move(game_state, 'X', 1,1,0,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 0,0,1,1)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,1,2,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 2,2,1,1)
+#     draw_board(game_state)
+#     game_state_copy = get_game_state_copy(game_state)
+#     make_move(game_state, 'X', 1,1,1,1)
+#     draw_board(game_state)
+#     draw_board(game_state_copy)
 #     print(game_state[1])
 #     print(game_state_copy[1])
 #     print(game_state[2])
 #     print(game_state_copy[2])
 
-#     makeMove(game_state, 'X', 1,1,0,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 0,0,1,1)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,1,2,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 2,2,1,1)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,1,1,1)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 0,0,1,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,0,2,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 2,0,1,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,0,1,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 1,0,1,1)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,0,0,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 0,0,1,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,2,2,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 2,2,1,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,2,2,0)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'O', 2,0,1,2)
-#     drawBoard(game_state)
-#     makeMove(game_state, 'X', 1,2,2,1)
-#     drawBoard(game_state)
+#     make_move(game_state, 'X', 1,1,0,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 0,0,1,1)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,1,2,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 2,2,1,1)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,1,1,1)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 0,0,1,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,0,2,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 2,0,1,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,0,1,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 1,0,1,1)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,0,0,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 0,0,1,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,2,2,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 2,2,1,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,2,2,0)
+#     draw_board(game_state)
+#     make_move(game_state, 'O', 2,0,1,2)
+#     draw_board(game_state)
+#     make_move(game_state, 'X', 1,2,2,1)
+#     draw_board(game_state)
 #     print(winner(game_state))

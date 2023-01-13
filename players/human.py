@@ -19,7 +19,7 @@ def get_move(game_state, playerTile):
             bigy = int(move[1]) - 1
             smallx = int(move[2]) - 1
             smally = int(move[3]) - 1
-            if isValidMove(game_state[0], game_state[1], game_state[2], 
+            if is_valid_move(game_state[0], game_state[1], game_state[2], 
                 bigx, bigy, smallx, smally) == False:
                 print('That is not a valid move.')
                 print('Type the big column, ' + 
