@@ -1,0 +1,11 @@
+﻿P1 (X),P1 CAPTURE_BOX_CONST,P1 GIVE_FREE_CONST,P1 STOP_VALUE,P2 (O),P2 CAPTURE_BOX_CONST,P2 GIVE_FREE_CONST,P2 STOP_VALUE,TIMEOUT_LIMIT (s),X wins,Draws,O wins,X win rate,Notes:
+adjusted_uct_v2,0.1,0.1,N/A,human_player (nyfine99),N/A,N/A,N/A,15,1,0,1,0.5,
+human_player (nyfine99),N/A,N/A,N/A,adjusted_uct_v2,0.1,0.1,N/A,15,1,0,1,0.5,
+adjusted_uct_v2,0.1,0.1,N/A,ordinary_uct,N/A,N/A,N/A,2,34,7,9,0.75,adjusted_v2 beats ordinary as X
+ordinary_uct,N/A,N/A,N/A,adjusted_uct_v2,0.1,0.1,N/A,2,16,7,27,0.39,"adjusted_v2 beats ordinary as O; overall win rate 0.68 for adjusted; 95% CI is [0.4, 0.6] if adjusted_v2 and ordinary were the same strength"
+adjusted_uct_v2,0.1,0.1,N/A,adjusted_uct_v2,0.2,0.2,N/A,2,8,8,4,0.6,Seen enough
+adjusted_uct_v2,0.1,0.1,N/A,adjusted_uct_v2,0.05,0.05,N/A,2,25,9,16,0.59,Seen enough
+adjusted_uct_v2,0.1,0.1,N/A,adjusted_uct_v2,0.15,0.15,N/A,2,17,9,6,0.67,Seen enough
+adjusted_uct_v2,0.1,0.1,N/A,adjusted_uct_v2,0.075,0.075,N/A,2,20,8,22,0.48,
+adjusted_uct_v2,0.075,0.075,N/A,adjusted_uct_v2,0.1,0.1,N/A,2,19,9,22,0.47,
+adjusted_uct_v2,0.08,0.08,N/A,adjusted_uct_v2,0.1,0.1,N/A,2,,,,,
