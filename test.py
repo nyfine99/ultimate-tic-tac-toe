@@ -123,9 +123,18 @@ if __name__=="__main__":
     if len(sys.argv)>5:
         verbose=int(sys.argv[5])
 
-    x_wins = 0.0
+    results = {}
+    results["X wins"] = 0
+    results["O wins"] = 0
+    results["draws"] = 0
     for i in range(1, num_games+1):
-        x_wins += supervisor_test(prog1_name,prog2_name,TIMEOUT_LIMIT,verbose)
+        result = supervisor_test(prog1_name,prog2_name,TIMEOUT_LIMIT,verbose)
+        if result == 1.0:
+            results["X wins"] += 1
+        elif result == 0.0:
+            results["O wins"] += 1
+        else:
+            results["draws"] += 1
         if prog1_name == "ordinary_uct" or prog2_name == "ordinary_uct":
             ordinary_uct.ord_seen = {"X": {}, "O": {}}
             # print("Ordinary total calls to UCT: " + str(ordinary_uct.ord_total_tries))
@@ -134,7 +143,9 @@ if __name__=="__main__":
             improved_uct.imp_seen = {"X": {}, "O": {}}
             # print("Improved total calls to UCT: " + str(improved_uct.imp_total_tries))
             improved_uct.imp_total_tries = 0
-        print("X wins:" + str(x_wins))
         print("Games played: " + str(i))
+        print("X wins: " + str(results["X wins"]))
+        print("O wins: " + str(results["O wins"]))
+        print("Draws: " + str(results["draws"]))
 
     # print(x_wins/num_games)

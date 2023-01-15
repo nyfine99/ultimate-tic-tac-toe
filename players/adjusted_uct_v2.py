@@ -290,7 +290,7 @@ def get_move(game_state, curr_player):
             if gives_free_move:
                 local_free_const = GIVE_FREE_CONST
             if post_move in imp_seen[curr_player] and (
-                imp_seen[curr_player][post_move][0] > curr_max_r):
+                imp_seen[curr_player][post_move][0] + local_box_const - local_free_const > curr_max_r):
                 curr_best = move
                 curr_max_r = imp_seen[curr_player][post_move][0] + local_box_const - local_free_const
 
@@ -310,9 +310,9 @@ def get_move(game_state, curr_player):
             if gives_free_move:
                 local_free_const = GIVE_FREE_CONST
             if post_move in imp_seen[curr_player] and (
-                imp_seen[curr_player][post_move][0] < curr_min_r):
+                imp_seen[curr_player][post_move][0] - local_box_const + local_free_const < curr_min_r):
                 curr_best = move
-                curr_min_r = imp_seen[curr_player][post_move][0] + local_box_const - local_free_const
+                curr_min_r = imp_seen[curr_player][post_move][0] - local_box_const + local_free_const
 
         # This statement can be used to obtain how UCT views its win probability after this move        
         # print(curr_min_r)
