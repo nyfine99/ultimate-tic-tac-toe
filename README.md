@@ -30,17 +30,35 @@ The following files are all contained within the "players" folder, and contain e
 
 This file allows a human to play against any of the automated players, or against another human.
 
-### improved.py
+### random_player.py
 
-This file will contain the code for the improved UCT algorithm; TBA.
+This file contains the get_move function for a random player, which moves randomly.
 
 ### ordinary_uct.py
 
 This file contains the code implementing the ordinary UCT algorithm for Ultimate Tic-Tac-Toe.
 
-### random_player.py
+### adjusted_uct_v1.py
 
-This file contains the get_move function for a random player, which moves randomly.
+This file contains the code implementing an adjusted version of the UCT algorithm for Ultimate Tic-Tac-Toe. This adjusted version multiplies the square root part of the formula in Q value calculation by constants corresponding to whether the move captures a small board (good) and whether the move gives the opponent an unrestricted move (bad). In testing with multiple values (unrecorded), this version does not perform so well against ordinary UCT.
+
+### adjusted_uct_v2.py
+
+This file contains the code implementing an adjusted version of the UCT algorithm for Ultimate Tic-Tac-Toe. This adjusted version adds to/subtracts from the win rate of a given move with constants corresponding to whether the move captures a small board (adds) and whether the move gives the opponent an unrestricted move (subtracts). In testing with multiple values, this version performs well against ordinary UCT; to see the results with various parameter values, see experiment_results.csv, or a synopsis in the "Notes and Conclusions" section.
+
+### adjusted_uct_v2_copy.py
+
+This file is an exact copy of adjusted_uct_v2.py, and it allows for playing adjusted_uct_v2.py against itself with different parameter values.
+
+### adjusted_uct_v3.py
+
+This file contains the code implementing an adjusted version of the UCT algorithm for Ultimate Tic-Tac-Toe. This adjusted version adds to/subtracts from the win rate of a given move with constants corresponding to whether the move captures a small board (adds) and whether the move gives the opponent an unrestricted move (subtracts). However, these constants are only utilized while a specified amount of spaces are left unfilled; otherwise, the ordinary UCT algorithm is used. In testing with multiple values, this version performs well against ordinary UCT; to see the results with various parameter values, see experiment_results.csv, or a synopsis in the "Notes and Conclusions" section.
+
+## Other Files
+
+### experiment_results.csv
+
+This file contains the results from experiments with the adjusted UCT files with various parameter values.
 
 ## Usage
 
@@ -85,4 +103,4 @@ python3 test.py players.ordinary players.improved 25 0.5 0
 
 ## Notes and Conclusions
 
-The basic implementation of UCT in Ultimate Tic-Tac-Toe differed greatly from its implementation in Reversi in one key regard: its effectiveness against humans (or, at least against me). The Reversi ordinary UCT player could beat me fairly consistently when alloted five seconds per move, possibly less. But I was very consistently able to crush the Ultimate Tic-Tac-Toe ordinary UCT player even when giving it fifteen seconds to move, usually because it would mistakenly give me unrestricted moves which I would then be able to capitalize on. There is certainly plently of improvement that can be done, TBA!
+TBA.
