@@ -135,14 +135,28 @@ if __name__=="__main__":
             results["O wins"] += 1
         else:
             results["draws"] += 1
+        
+        # all programs which use UCT must be put here to clear their analysis of seen states
         if prog1_name == "ordinary_uct" or prog2_name == "ordinary_uct":
             ordinary_uct.ord_seen = {"X": {}, "O": {}}
             # print("Ordinary total calls to UCT: " + str(ordinary_uct.ord_total_tries))
             ordinary.ord_total_tries = 0
-        if prog1_name == "improved_uct" or prog2_name == "improved_uct":
-            improved_uct.imp_seen = {"X": {}, "O": {}}
+        if prog1_name == "adjusted_uct_v1" or prog2_name == "adjusted_uct_v1":
+            adjusted_uct_v1.imp_seen = {"X": {}, "O": {}}
             # print("Improved total calls to UCT: " + str(improved_uct.imp_total_tries))
-            improved_uct.imp_total_tries = 0
+            adjusted_uct_v1.imp_total_tries = 0
+        if prog1_name == "adjusted_uct_v2" or prog2_name == "adjusted_uct_v2":
+            adjusted_uct_v2.imp_seen = {"X": {}, "O": {}}
+            # print("Improved total calls to UCT: " + str(improved_uct.imp_total_tries))
+            adjusted_uct_v2.imp_total_tries = 0
+        if prog1_name == "adjusted_uct_v2_copy" or prog2_name == "adjusted_uct_v2_copy":
+            adjusted_uct_v2_copy.imp_seen = {"X": {}, "O": {}}
+            # print("Improved total calls to UCT: " + str(improved_uct.imp_total_tries))
+            adjusted_uct_v2_copy.imp_total_tries = 0
+        if prog1_name == "adjusted_uct_v3" or prog2_name == "adjusted_uct_v3":
+            adjusted_uct_v3.imp_seen = {"X": {}, "O": {}}
+            # print("Improved total calls to UCT: " + str(improved_uct.imp_total_tries))
+            adjusted_uct_v3.imp_total_tries = 0
         print("Games played: " + str(i))
         print("X wins: " + str(results["X wins"]))
         print("O wins: " + str(results["O wins"]))

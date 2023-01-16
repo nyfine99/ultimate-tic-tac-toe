@@ -7,11 +7,6 @@ event of tied r values. These constants are added to the win rate in both the
 Q value calculation and during move selection.
 """
 
-# After only STOP_VALUE spaces are available, this system no longer takes effect.
-# Note that this is only checked at the start of the get_move function, not with
-# each recursive call to UCT
-STOP_VALUE = 82 # N/A, currently
-
 # The constant added to r for a captured box
 CAPTURE_BOX_CONST = 0.1
 

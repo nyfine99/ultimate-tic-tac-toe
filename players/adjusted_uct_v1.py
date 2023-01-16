@@ -7,11 +7,6 @@ event of tied r values. These constants are multipliers applied to the square
 root part of the q calculation.
 """
 
-# After only STOP_VALUE spaces are available, this system no longer takes effect.
-# Note that this is only checked at the start of the get_move function, not with
-# each recursive call to UCT
-STOP_VALUE = 40 # N/A
-
 # The multiplier used in Q value calculation for capturing a box; >= 1
 CAPTURE_BOX_MULT = 1.25
 
