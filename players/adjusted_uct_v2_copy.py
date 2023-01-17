@@ -8,10 +8,10 @@ Q value calculation and during move selection.
 """
 
 # The constant added to r for a captured box
-CAPTURE_BOX_CONST = 0.125
+CAPTURE_BOX_CONST = 0.1
 
 # The constant subtracted from r when an unrestricted move is given
-GIVE_FREE_CONST = 0.125
+GIVE_FREE_CONST = 0.1
 
 # performing necessary imports
 from ultimate_ttt import *
