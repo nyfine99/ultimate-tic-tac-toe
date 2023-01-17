@@ -32,6 +32,14 @@ imp_total_tries = 0 # tracks how many times the get_move algorithm has
 # been run; I wanted to compare this to improved and it helped with debugging
 
 
+def reset_globals():
+    # Used by test.py to reset imp_seen and imp_total_tries between games
+    global imp_seen
+    global imp_total_tries
+    imp_seen = {"X": {}, "O": {}}
+    imp_total_tries = 0
+
+
 def alt_make_move(game_state, tile, bigx, bigy, smallx, smally):
     # an alternate make_move function which returns None if the move is
     # invalid and updates the game state if it is valid. However, this will

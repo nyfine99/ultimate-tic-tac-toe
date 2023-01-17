@@ -8,10 +8,10 @@ Q value calculation and during move selection.
 """
 
 # The constant added to r for a captured box
-CAPTURE_BOX_CONST = 0.1
+CAPTURE_BOX_CONST = 0.125
 
 # The constant subtracted from r when an unrestricted move is given
-GIVE_FREE_CONST = 0.1
+GIVE_FREE_CONST = 0.125
 
 # performing necessary imports
 from ultimate_ttt import *
@@ -30,6 +30,14 @@ imp_seen = {"X": {}, "O": {}} # map from player ->
 imp_total_tries = 0 # tracks how many times the get_move algorithm has
 # been run; I wanted to compare this to improved and it helped with debugging
 
+
+def reset_globals():
+    # Used by test.py to reset imp_seen and imp_total_tries between games
+    global imp_seen
+    global imp_total_tries
+    imp_seen = {"X": {}, "O": {}}
+    imp_total_tries = 0
+    
 
 def alt_make_move(game_state, tile, bigx, bigy, smallx, smally):
     # an alternate make_move function which returns None if the move is

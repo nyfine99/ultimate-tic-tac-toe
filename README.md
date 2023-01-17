@@ -22,6 +22,10 @@ This file allows for the user to pit two of the algorithms against each other, a
 
 This file allows for the user to pit two of the algorithms against each other, a human player against one of the algorithms, or two humans against each other for several games, and to observe the results. Usage details to follow.
 
+### test_with_memory.py
+
+Similar to the above, but does not clear the players' states-seen dictionaries between games. Usage details to follow.
+
 ## Player Files
 
 The following files are all contained within the "players" folder, and contain essential functions for both human and automated players.
@@ -84,7 +88,13 @@ python3 supervisor.py players.ordinary_uct players.adjusted_uct_v2 2.0 1
 ```
 
 ### Multiple Games
-To run two programs against each other for multiple games, cd to ultimate-tic-tac-toe and put the following line of code into the terminal:
+To run two programs against each other for multiple games, with "memory" (meaning, each player retains their states-seen), cd to ultimate-tic-tac-toe and put the following line of code into the terminal:
+
+```bash
+python3 test_with_memory.py prog1 prog2 num_games timeout_limit verbose
+```
+
+To do so without memory, say:
 
 ```bash
 python3 test.py prog1 prog2 num_games timeout_limit verbose
@@ -95,12 +105,27 @@ This works as with the single game above, but with the following additions:
 - num_games sets the number of games for which the programs will run against each other.
 - Between games, the system will print the total number of X wins thus far, as well as how many games have been played.
 
-Example: to test the ordinary UCT algorithm against version 2 of the adjusted UCT algorithm, with ordinary moving first, for 25 games; not showing the board between moves and alloting each player 0.5 seconds to move, we would say:
+Example: to test the ordinary UCT algorithm against version 2 of the adjusted UCT algorithm, with ordinary moving first, for 25 games; not showing the board between moves and alloting each player 0.5 seconds to move; and with memory; we would say:
 
 ```bash
-python3 test.py players.ordinary_uct players.adjusted_uct_v2 25 0.5 0
+python3 test_with_memory.py players.ordinary_uct players.adjusted_uct_v2 25 0.5 0
 ```
 
-## Notes and Conclusions
 
-TBA.
+## Notes
+
+It should be noted that, after completion, testing was discovered to have been done with a version of test.py which did not clear the states-seen dictionaries between games for all of the UCT files (with "memory", discussed earlier). Meaning, if multiple games were run, players would save the states-seen from previous games for use in the current one. While this is similar to how human players operate, where we learn from our mistakes, this was not initially my desired testing method for the UCT algorithms, though it is justifiable after the fact. I hope to one day rerun the tests with the non-remembering test.py; the test.py which keeps the states-seen is now saved as test_with_memory.py.
+
+Adjusted UCT v1 performed poorly against ordinary UCT, with both given 2 seconds to move, in initial testing. This testing is not recorded in experiment_results, and no further testing was done, as focus shifted to adjusted UCT v2, which did perform well in initial testing.
+
+However, v2 with the appropriate parameter values (in the 0.1 to 0.125 range for both CAPTURE_BOX_CONST and GIVE_FREE_CONST) was found to perform rather well against ordinary UCT, achieving a win rate north of 0.6 (counting draws as 0.5) as both X and O when both players were given 2 seconds to move. This win rate is outside of the 95% confidence interval of what we would expect to see if adjusted UCT v2 and ordinary UCT were truly equal, and thus this outperformance is significant. The v2 parameters have not been fully optimized, but parameter values of 0.1 and 0.125 (for both added parameters) perform similarly against each other, both when given 2 and when given 15 seconds to move; when 0.05, 0.075, 0.15, and 0.2 were tested against 0.1 with 2 seconds to move, decreased performance was observed.
+
+In limited testing, v3 did not outperform v2 with a STOP_VALUE of 27 and with both players having 2 seconds to move, but further testing is needed for other parameter values.
+
+In terms of performance against humans, there appears to have been a massive upgrade from ordinary UCT to adjusted UCT v2. Ordinary UCT was able to beat a ten year old beginner with 15 seconds to move, but I consistently crushed it. However, adjusted UCT v2 beat me about as often as I beat it when given 15 seconds to move, with parameter values of both 0.1 and 0.125.
+
+Feel free to browse experiment_results for more detailed results.
+
+## Conclusion
+
+Overall, I am pleased with the performance of adjusted UCT v2 with both of its additional parameters having value either 0.1 or 0.125, especially against me, as this version of the automated player was able to beat me! That said, there is certainly still room to optimize.

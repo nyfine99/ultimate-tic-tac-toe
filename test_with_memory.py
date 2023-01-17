@@ -23,7 +23,6 @@ def showNextMoveLoc(game_state, tile):
 def supervisor_test(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
     player1_get_move=get_func(prog1_name, 'get_move')
     player2_get_move=get_func(prog2_name, 'get_move')
-    # print(ordinary_uct.ord_seen)
 
     if prog1_name==prog2_name:
         prog1_name=prog1_name+"_v1"
@@ -97,7 +96,6 @@ def supervisor_test(prog1_name,prog2_name,TIMEOUT_LIMIT, verbose):
                 turn = prog1_name
 
         moves+=1
-        # print(ordinary_uct.ord_seen)
     # Display the final board and the winner
     draw_board(game_state)
     c = winner(game_state)
@@ -138,17 +136,6 @@ if __name__=="__main__":
         else:
             results["draws"] += 1
         
-        # all programs which use UCT must be put here to clear their analysis of seen states
-        if prog1_name == "players.ordinary_uct" or prog1_name == "players.adjusted_uct_v1" or (
-            prog1_name == "players.adjusted_uct_v2" or prog1_name == "players.adjusted_uct_v2_copy" or 
-            prog1_name == "players.adjusted_uct_v3"):
-            player1_reset_globals=get_func(prog1_name, 'reset_globals')
-            player1_reset_globals()
-        if prog2_name == "players.ordinary_uct" or prog2_name == "players.adjusted_uct_v1" or (
-            prog2_name == "players.adjusted_uct_v2" or prog2_name == "players.adjusted_uct_v2_copy" or 
-            prog2_name == "players.adjusted_uct_v3"):
-            player2_reset_globals=get_func(prog2_name, 'reset_globals')
-            player2_reset_globals()
         print("Games played: " + str(i))
         print("X wins: " + str(results["X wins"]))
         print("O wins: " + str(results["O wins"]))

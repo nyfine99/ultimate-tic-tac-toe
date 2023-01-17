@@ -19,6 +19,15 @@ ord_seen = {"X": {}, "O": {}} # map from player ->
 ord_total_tries = 0 # tracks how many times the get_move algorithm has
 # been run; I wanted to compare this to improved and it helped with debugging
 
+
+def reset_globals():
+    # Used by test.py to reset ord_seen and ord_total_tries between games
+    global ord_seen
+    global ord_total_tries
+    ord_seen = {"X": {}, "O": {}}
+    ord_total_tries = 0
+
+
 def get_state_string(game_state):
     # Returns the game_state represented as a string.
 
